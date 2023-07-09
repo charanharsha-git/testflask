@@ -57,61 +57,88 @@
             var storeNumber = document.getElementById("storeNumber").value;
             var promotionWeightage = parseFloat(document.getElementById("promotionWeightage").value);
             var forecastDays = parseInt(document.getElementById("forecastDays").value);
-            var columnSelection = document.getElementById("columnSelection").value;
             
-            // Call your backend function here to generate the dataframe
+            // Send AJAX request to retrieve the dataframe from Flask backend
+            var xhr = new XMLHttpRequest();
+            var url = "/generate_dataframe";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var dataframe = JSON.parse(xhr.responseText);
+                    var columns = Object.keys(dataframe[0]);
+                    
+                    // Update column selection options
+                    var columnSelection = document.getElementById("columnSelection");
+                    columnSelection.innerHTML = "";
+                    for (var i = 0; i < columns.length; i++) {
+                        var option = document.createElement("option");
+                        option.value = columns[i];
+                        option.text = columns[i];
+                        columnSelection.appendChild(option);
+                    }
+                    
+                    // Generate visualization using D3.js
+                    var selectedColumn = columnSelection.value;
+                    var data = dataframe.map(function (row) {
+                        return {
+                            date: new Date(row.Date),
+                            value: row[selectedColumn]
+                        };
+                    });
+                    
+                    // Clear previous visualization, if any
+                    var container = document.getElementById("visualizationContainer");
+                    container.innerHTML = "";
+                    
+                    // Create SVG container
+                    var svg = d3.select("#visualizationContainer")
+                        .append("svg")
+                        .attr("width", 500)
+                        .attr("height", 300);
+                    
+                    // Set up scales and axes
+                    var xScale = d3.scaleTime()
+                        .domain(d3.extent(data, function(d) { return d.date; }))
+                        .range([50, 450]);
+                    
+                    var yScale = d3.scaleLinear()
+                        .domain([0, d3.max(data, function(d) { return d.value; })])
+                        .range([250, 50]);
+                    
+                    var xAxis = d3.axisBottom(xScale);
+                    var yAxis = d3.axisLeft(yScale);
+                    
+                    // Add axes to the SVG
+                    svg.append("g")
+                        .attr("transform", "translate(0, 250)")
+                        .call(xAxis);
+                    
+                    svg.append("g")
+                        .attr("transform", "translate(50, 0)")
+                        .call(yAxis);
+                    
+                    // Draw line chart
+                    var line = d3.line()
+                        .x(function(d) { return xScale(d.date); })
+                        .y(function(d) { return yScale(d.value); });
+                    
+                    svg.append("path")
+                        .datum(data)
+                        .attr("fill", "none")
+                        .attr("stroke", "steelblue")
+                        .attr("stroke-width", 2)
+                        .attr("d", line);
+                }
+            };
             
-            // Example code to generate a sample visualization using D3.js
-            var data = [
-                // Sample time series data
-                { date: new Date(2023, 0, 1), value: 10 },
-                { date: new Date(2023, 0, 2), value: 20 },
-                { date: new Date(2023, 0, 3), value: 30 },
-                // Add more data points here
-            ];
-            
-            // Clear previous visualization, if any
-            var container = document.getElementById("visualizationContainer");
-            container.innerHTML = "";
-            
-            // Create SVG container
-            var svg = d3.select("#visualizationContainer")
-                .append("svg")
-                .attr("width", 500)
-                .attr("height", 300);
-            
-            // Set up scales and axes
-            var xScale = d3.scaleTime()
-                .domain(d3.extent(data, function(d) { return d.date; }))
-                .range([50, 450]);
-            
-            var yScale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) { return d.value; })])
-                .range([250, 50]);
-            
-            var xAxis = d3.axisBottom(xScale);
-            var yAxis = d3.axisLeft(yScale);
-            
-            // Add axes to the SVG
-            svg.append("g")
-                .attr("transform", "translate(0, 250)")
-                .call(xAxis);
-            
-            svg.append("g")
-                .attr("transform", "translate(50, 0)")
-                .call(yAxis);
-            
-            // Draw line chart
-            var line = d3.line()
-                .x(function(d) { return xScale(d.date); })
-                .y(function(d) { return yScale(d.value); });
-            
-            svg.append("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 2)
-                .attr("d", line);
+            // Send the request with the input data
+            var requestData = {
+                storeNumber: storeNumber,
+                promotionWeightage: promotionWeightage,
+                forecastDays: forecastDays
+            };
+            xhr.send(JSON.stringify(requestData));
         }
     </script>
 </body>
