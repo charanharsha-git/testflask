@@ -9,24 +9,24 @@ from sklearn.preprocessing import MinMaxScaler
 
 app = Flask(__name__)
 
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_models_lstm.pkl', 'rb') as file:
+with open('pickle_files/list_of_models_lstm.pkl', 'rb') as file:
   models1 = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/time_cov.pkl', 'rb') as file:
+with open('pickle_files/time_cov.pkl', 'rb') as file:
   time_cov = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_store_specific.pkl', 'rb') as file:
+with open('pickle_files/list_of_store_specific.pkl', 'rb') as file:
   list_of_store_specific = pickle.load(file)
 
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_train_data.pkl', 'rb') as file:
+with open('pickle_files/list_of_train_data.pkl', 'rb') as file:
   list_of_train_data = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_test_data.pkl', 'rb') as file:
+with open('pickle_files/list_of_test_data.pkl', 'rb') as file:
   list_of_test_data = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_train.pkl', 'rb') as file:
+with open('pickle_files/list_of_train.pkl', 'rb') as file:
   list_of_train = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_test.pkl', 'rb') as file:
+with open('pickle_files/list_of_test.pkl', 'rb') as file:
   list_of_test = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_final_df.pkl', 'rb') as file:
+with open('pickle_files/list_of_final_df.pkl', 'rb') as file:
   list_of_final_df = pickle.load(file)
-with open('C:/Users/Admin/PycharmProject/walmart_poc/pickle_files/list_of_scaler.pkl', 'rb') as file:
+with open('pickle_files/list_of_scaler.pkl', 'rb') as file:
   list_of_scaler = pickle.load(file)
 
 def prediction_fn(store_nbr,n_steps,promotion_weightage):
