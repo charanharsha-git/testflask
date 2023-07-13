@@ -9,7 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 app = Flask(__name__)
 
-with open('pickle_files/list_of_models_lstm.pkl', 'rb') as file:
+with open('pickle_files/list_of_models_1.pkl', 'rb') as file:
   models1 = pickle.load(file)
 with open('pickle_files/time_cov.pkl', 'rb') as file:
   time_cov = pickle.load(file)
