@@ -6,11 +6,17 @@ import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import LSTM, Dense,Dropout
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import save_model, load_model
+
+ 
+
+
 
 app = Flask(__name__)
 
-with open('pickle_files/list_of_models_1.pkl', 'rb') as file:
-  models1 = pickle.load(file)
+#with open('pickle_files/list_of_models_lstm.pkl', 'rb') as file:
+  #models1 = pickle.load(file)
+models1 = load_model('pickle_files/store_44_model.h5')
 with open('pickle_files/time_cov.pkl', 'rb') as file:
   time_cov = pickle.load(file)
 with open('pickle_files/list_of_store_specific.pkl', 'rb') as file:
@@ -101,7 +107,7 @@ def plotting(store_nbr,n_steps,promotion_weightage,product_name):
     # Adding legend
     plt.legend()
     plt.savefig("static/prediction1.png")
-    return None
+    return plt.show()
 
 @app.route('/')
 def index():
@@ -109,18 +115,18 @@ def index():
 
 @app.route('/forecast', methods=['POST'])
 def forecast():
-    store_no = request.form['storeNo']
-    forecast_days = request.form['forecastDays']
-    promotion1 = request.form['promotion1']
+    store_no = int(request.form['storeNo'])
+    forecast_days = int(request.form['forecastDays'])
+    promotion1 = float(request.form['promotion1'])
     promotion2 = request.form['promotion2']
     promotion3 = request.form['promotion3']
     product_family = request.form.getlist('productFamily')
-    plotting(store_no,forecast_days,promotion1,product_family)
+    chart=plotting(store_no,forecast_days,promotion1,product_family)
     # Perform the forecast calculation and obtain the forecast data
 
     return render_template('forecast.html', store_no=store_no, forecast_days=forecast_days,
                            promotion1=promotion1, promotion2=promotion2, promotion3=promotion3,
-                           product_family=product_family)
+                           product_family=product_family,chart=chart)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
