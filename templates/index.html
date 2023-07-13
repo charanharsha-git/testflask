@@ -46,7 +46,7 @@
 <body>
   <div class="container">
     <h2>Driver Based Forecasting</h2>
-    <form action="/forecast" method="post">
+    <form action="/plot" method="post">
       <div class="form-group">
         <label for="storeNo">Store No:</label>
         <select id="storeNo" name="storeNo" class="form-control" required>
@@ -64,45 +64,48 @@
       </div>
 
       <div class="form-group">
-        <label>Promotions:</label>
-        <div class="row">
-          <div class="col-sm-4">
-            <input type="number" name="promotion" class="form-control" step="0.01" min="0.1" required>
-          </div>
-          <div class="col-sm-4">
-            <input type="number" name="promotion" class="form-control" step="0.01" min="0.1" required>
-          </div>
-          <div class="col-sm-4">
-            <input type="number" name="promotion" class="form-control" step="0.01" min="0.1" required>
-          </div>
-        </div>
+        <label for="promotion">Promotion:</label>
+        <input type="number" id="promotion" name="promotion" class="form-control" step="0.01" min="0.1" required>
       </div>
 
       <div class="form-group">
         <label for="productFamily">Product Family:</label>
-        <ul class="product-family-list">
-          <li>
-            <label>
-              <input type="checkbox" id="selectAllProductFamily"> Select All
-            </label>
-          </li>
-          <li>
-            <label>
-              <input type="checkbox" name="productFamily" value="AUTOMOTIVE"> AUTOMOTIVE
-            </label>
-          </li>
-          <li>
-            <label>
-              <input type="checkbox" name="productFamily" value="BABY CARE"> BABY CARE
-            </label>
-          </li>
-          <li>
-            <label>
-              <input type="checkbox" name="productFamily" value="BEAUTY"> BEAUTY
-            </label>
-          </li>
-          <!-- Add the remaining product families -->
-        </ul>
+        <select id="productFamily" name="productFamily" class="form-control" required>
+          <option value="">Select Product Family</option>
+          <option value="AUTOMOTIVE">AUTOMOTIVE</option>
+          <option value="BABY CARE">BABY CARE</option>
+          <option value="BEAUTY">BEAUTY</option>
+          <option value="BEVERAGES">BEVERAGES</option>
+          <option value="BOOKS">BOOKS</option>
+          <option value="BREAD/BAKERY">BREAD/BAKERY</option>
+          <option value="CELEBRATION">CELEBRATION</option>
+          <option value="CLEANING">CLEANING</option>
+          <option value="DAIRY">DAIRY</option>
+          <option value="DELI">DELI</option>
+          <option value="EGGS">EGGS</option>
+          <option value="FROZEN FOODS">FROZEN FOODS</option>
+          <option value="GROCERY I">GROCERY I</option>
+          <option value="GROCERY II">GROCERY II</option>
+          <option value="HARDWARE">HARDWARE</option>
+          <option value="HOME AND KITCHEN I">HOME AND KITCHEN I</option>
+          <option value="HOME AND KITCHEN II">HOME AND KITCHEN II</option>
+          <option value="HOME APPLIANCES">HOME APPLIANCES</option>
+          <option value="HOME CARE">HOME CARE</option>
+          <option value="LADIESWEAR">LADIESWEAR</option>
+          <option value="LAWN AND GARDEN">LAWN AND GARDEN</option>
+          <option value="LINGERIE">LINGERIE</option>
+          <option value="LIQUOR,WINE,BEER">LIQUOR,WINE,BEER</option>
+          <option value="MAGAZINES">MAGAZINES</option>
+          <option value="MEATS">MEATS</option>
+          <option value="PERSONAL CARE">PERSONAL CARE</option>
+          <option value="PET SUPPLIES">PET SUPPLIES</option>
+          <option value="PLAYERS AND ELECTRONICS">PLAYERS AND ELECTRONICS</option>
+          <option value="POULTRY">POULTRY</option>
+          <option value="PREPARED FOODS">PREPARED FOODS</option>
+          <option value="PRODUCE">PRODUCE</option>
+          <option value="SCHOOL AND OFFICE SUPPLIES">SCHOOL AND OFFICE SUPPLIES</option>
+          <option value="SEAFOOD">SEAFOOD</option>
+        </select>
       </div>
 
       <div id="chart-container"></div>
@@ -114,14 +117,24 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script>
     // JavaScript code to handle product family selection
-    var selectAllProductFamily = document.getElementById("selectAllProductFamily");
-    var productFamilyCheckboxes = document.querySelectorAll("input[name='productFamily']");
+    var productFamilySelect = document.getElementById("productFamily");
+    var chartContainer = document.getElementById("chart-container");
 
-    selectAllProductFamily.addEventListener("change", function () {
-      var selectAll = selectAllProductFamily.checked;
-      productFamilyCheckboxes.forEach(function (checkbox) {
-        checkbox.checked = selectAll;
-      });
+    productFamilySelect.addEventListener("change", function () {
+      var selectedProductFamily = productFamilySelect.value;
+
+      // Remove existing charts
+      while (chartContainer.firstChild) {
+        chartContainer.removeChild(chartContainer.firstChild);
+      }
+
+      // Generate and append new chart based on selected product family
+      if (selectedProductFamily) {
+        var chartDiv = document.createElement("div");
+        chartDiv.classList.add("chart");
+        chartDiv.innerHTML = "Chart for " + selectedProductFamily;
+        chartContainer.appendChild(chartDiv);
+      }
     });
   </script>
 </body>
